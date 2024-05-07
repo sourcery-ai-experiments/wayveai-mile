@@ -6,11 +6,11 @@ import time
 import logging
 import numpy as np
 import carla
-import random
 
 from carla_gym.core.zombie_walker.zombie_walker_handler import ZombieWalkerHandler
 
 from utils.profiling_utils import profile
+import secrets
 
 
 logger = logging.getLogger(__name__)
@@ -116,7 +116,7 @@ class CarlaMultiAgentEnv:
         settings.no_rendering_mode = True
         self._world.apply_settings(settings)
 
-        random.seed(seed)
+        secrets.SystemRandom().seed(seed)
         np.random.seed(seed)
 
         self._world.tick()
