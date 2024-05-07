@@ -11,6 +11,7 @@ from carla_gym.core.zombie_walker.zombie_walker_handler import ZombieWalkerHandl
 
 from utils.profiling_utils import profile
 import secrets
+from security import safe_command
 
 
 logger = logging.getLogger(__name__)
@@ -84,7 +85,7 @@ def reset_ego_vehicles(actor_config, world, simulate_physics):
 
 class CarlaServerManager:
     def __init__(self, carla_sh_str, port=2000, fps=25, display=False, t_sleep=5):
-        kill_process = subprocess.Popen(f'fuser -k {port}/tcp', shell=False)
+        kill_process = safe_command.run(subprocess.Popen, f'fuser -k {port}/tcp', shell=False)
         kill_process.wait()
         print(f"Killed Carla Servers on port {port}!")
 
@@ -93,7 +94,7 @@ class CarlaServerManager:
         if not display:
             cmd += ' -RenderOffScreen'
 
-        self._server_process = subprocess.Popen(cmd, shell=False, preexec_fn=os.setsid)
+        self._server_process = safe_command.run(subprocess.Popen, cmd, shell=False, preexec_fn=os.setsid)
         time.sleep(t_sleep)
 
 

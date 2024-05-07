@@ -5,6 +5,8 @@ import os
 import time
 from omegaconf import OmegaConf
 import logging
+from security import safe_command
+
 log = logging.getLogger(__name__)
 
 from mile.constants import CARLA_FPS
@@ -15,7 +17,7 @@ def kill_carla(port=2005):
     #kill_process = subprocess.Popen('killall -9 -r CarlaUE4-Linux', shell=True)
 
     # This one only kills processes linked to a certain port
-    kill_process = subprocess.Popen(f'fuser -k {port}/tcp', shell=False)
+    kill_process = safe_command.run(subprocess.Popen, f'fuser -k {port}/tcp', shell=False)
     log.info(f"Killed Carla Servers on port {port}!")
     kill_process.wait()
     time.sleep(1)
@@ -50,7 +52,7 @@ class CarlaServerManager():
             cmd = f'CUDA_VISIBLE_DEVICES={cfg["gpu"]} bash {self._carla_sh_str} ' \
                 f'-fps={CARLA_FPS} -nosound -quality-level=Epic -carla-rpc-port={cfg["port"]}'
             log.info(cmd)
-            server_process = subprocess.Popen(cmd, shell=False, preexec_fn=os.setsid)
+            server_process = safe_command.run(subprocess.Popen, cmd, shell=False, preexec_fn=os.setsid)
         time.sleep(self._t_sleep)
 
     def stop(self):
