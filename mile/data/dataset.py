@@ -12,6 +12,7 @@ from torch.utils.data import Dataset, DataLoader
 from mile.constants import CARLA_FPS
 from mile.data.dataset_utils import integer_to_binary, calculate_birdview_labels
 from mile.utils.geometry_utils import get_out_of_view_mask, calculate_geometry
+import secrets
 
 
 class DataModule(pl.LightningDataModule):
@@ -109,10 +110,9 @@ class CarlaDataset(Dataset):
         print(f'Filtered {n_filtered_run} runs in {self.dataset_path}')
 
         if self.cfg.EVAL.DATASET_REDUCTION:
-            import random
-            random.seed(0)
+            secrets.SystemRandom().seed(0)
             final_size = int(len(data_pointers) / self.cfg.EVAL.DATASET_REDUCTION_FACTOR)
-            data_pointers = random.sample(data_pointers, final_size)
+            data_pointers = secrets.SystemRandom().sample(data_pointers, final_size)
 
         return data_pointers
 
