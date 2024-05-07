@@ -4,12 +4,12 @@ from importlib import import_module
 import json
 from pathlib import Path
 import socket
-import xml.etree.ElementTree as ET
 import h5py
 import carla
 import numpy as np
 import hydra
 import os
+import defusedxml.ElementTree
 
 
 def check_h5_maps(env_configs, obs_configs, carla_sh_path):
@@ -77,7 +77,7 @@ def init_agents(agent_configs_dict, **kwargs):
 
 def parse_routes_file(routes_xml_filename):
     route_descriptions_dict = {}
-    tree = ET.parse(routes_xml_filename)
+    tree = defusedxml.ElementTree.parse(routes_xml_filename)
 
     for route in tree.iter("route"):
 
@@ -108,7 +108,7 @@ def parse_routes_file(routes_xml_filename):
 
 
 def get_single_route(routes_xml_filename, route_id):
-    tree = ET.parse(routes_xml_filename)
+    tree = defusedxml.ElementTree.parse(routes_xml_filename)
     route = tree.find(f'.//route[@id="{route_id}"]')
 
     route_dict = {}
