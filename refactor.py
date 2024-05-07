@@ -93,7 +93,7 @@ def reset_ego_vehicles(actor_config, world):
 
 def kill_carla(port=2005):
     # This one only kills processes linked to a certain port
-    kill_process = subprocess.Popen(f'fuser -k {port}/tcp', shell=True)
+    kill_process = subprocess.Popen(f'fuser -k {port}/tcp', shell=False)
     kill_process.wait()
     print(f"Killed Carla Servers on port {port}!")
     time.sleep(1)
@@ -117,7 +117,7 @@ class CarlaServerManager:
         if not self._display:
             cmd += ' -RenderOffScreen'
 
-        self._server_process = subprocess.Popen(cmd, shell=True, preexec_fn=os.setsid)
+        self._server_process = subprocess.Popen(cmd, shell=False, preexec_fn=os.setsid)
         time.sleep(self._t_sleep)
 
     def stop(self):
